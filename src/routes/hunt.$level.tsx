@@ -38,7 +38,10 @@ function ChallengePage() {
 
   const load = useCallback(() => {
     const token = getToken();
-    if (!token) return navigate({ to: "/register" });
+    if (!token) {
+      navigate({ to: "/register" });
+      return;
+    }
     setFeedback(null);
     setAnswer("");
     fetchChallenge({ data: { token, level: lvl } }).then(setData).catch((e) => setError(e.message));

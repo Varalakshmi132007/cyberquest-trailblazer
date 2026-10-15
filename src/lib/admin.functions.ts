@@ -37,14 +37,14 @@ export const adminSaveChallenge = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => challengeSchema.parse(d))
   .handler(async ({ data, context }) => {
     const { id, answer, ...fields } = data;
-    const row: Record<string, unknown> = { ...fields };
+    const row: typeof fields & { answer_hash?: string } = { ...fields };
     if (answer) row.answer_hash = await sha256(answer.toLowerCase());
     if (id) {
       const { error } = await context.supabase.from("challenges").update(row).eq("id", id);
       if (error) throw new Error(error.message);
     } else {
       if (!answer) throw new Error("An answer is required for new challenges.");
-      const { error } = await context.supabase.from("challenges").insert(row as never);
+      const { error } = await context.supabase.from("challenges").insert({ ...row, answer_hash: row.answer_hash! });
       if (error) throw new Error(error.code === "23505" ? "That level number is already used." : error.message);
     }
     return { ok: true };
