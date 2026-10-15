@@ -97,7 +97,7 @@ export const getChallenge = createServerFn({ method: "POST" })
     };
   });
 
-export const useHint = createServerFn({ method: "POST" })
+export const requestHint = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => tokenSchema.extend({ level: z.number().int() }).parse(d))
   .handler(async ({ data }) => {
     const p = await getParticipant(data.token);
