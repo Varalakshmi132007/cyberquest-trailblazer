@@ -10,33 +10,115 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CompleteRouteImport } from './routes/complete'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as RulesRouteImport } from './routes/rules'
+import { Route as HuntIndexRouteImport } from './routes/hunt.index'
+import { Route as HuntLevelRouteImport } from './routes/hunt.$level'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompleteRoute = CompleteRouteImport.update({
+  id: '/complete',
+  path: '/complete',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RulesRoute = RulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HuntIndexRoute = HuntIndexRouteImport.update({
+  id: '/hunt/',
+  path: '/hunt/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HuntLevelRoute = HuntLevelRouteImport.update({
+  id: '/hunt/$level',
+  path: '/hunt/$level',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/complete': typeof CompleteRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/register': typeof RegisterRoute
+  '/rules': typeof RulesRoute
+  '/hunt/$level': typeof HuntLevelRoute
+  '/hunt/': typeof HuntIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/complete': typeof CompleteRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/register': typeof RegisterRoute
+  '/rules': typeof RulesRoute
+  '/hunt/$level': typeof HuntLevelRoute
+  '/hunt': typeof HuntIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/complete': typeof CompleteRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/register': typeof RegisterRoute
+  '/rules': typeof RulesRoute
+  '/hunt/$level': typeof HuntLevelRoute
+  '/hunt/': typeof HuntIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/complete'
+    | '/leaderboard'
+    | '/register'
+    | '/rules'
+    | '/hunt/$level'
+    | '/hunt/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/complete'
+    | '/leaderboard'
+    | '/register'
+    | '/rules'
+    | '/hunt/$level'
+    | '/hunt'
+  id:
+    | '__root__'
+    | '/'
+    | '/complete'
+    | '/leaderboard'
+    | '/register'
+    | '/rules'
+    | '/hunt/$level'
+    | '/hunt/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CompleteRoute: typeof CompleteRoute
+  LeaderboardRoute: typeof LeaderboardRoute
+  RegisterRoute: typeof RegisterRoute
+  RulesRoute: typeof RulesRoute
+  HuntLevelRoute: typeof HuntLevelRoute
+  HuntIndexRoute: typeof HuntIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +130,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/complete': {
+      id: '/complete'
+      path: '/complete'
+      fullPath: '/complete'
+      preLoaderRoute: typeof CompleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rules': {
+      id: '/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof RulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hunt/': {
+      id: '/hunt/'
+      path: '/hunt'
+      fullPath: '/hunt/'
+      preLoaderRoute: typeof HuntIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hunt/$level': {
+      id: '/hunt/$level'
+      path: '/hunt/$level'
+      fullPath: '/hunt/$level'
+      preLoaderRoute: typeof HuntLevelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CompleteRoute: CompleteRoute,
+  LeaderboardRoute: LeaderboardRoute,
+  RegisterRoute: RegisterRoute,
+  RulesRoute: RulesRoute,
+  HuntLevelRoute: HuntLevelRoute,
+  HuntIndexRoute: HuntIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
