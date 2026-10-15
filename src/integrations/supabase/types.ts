@@ -14,16 +14,223 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      challenges: {
+        Row: {
+          active: boolean
+          answer_hash: string
+          category: string
+          created_at: string
+          description: string
+          hint: string
+          hint_penalty: number
+          id: string
+          level: number
+          points: number
+          puzzle: string
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          answer_hash: string
+          category: string
+          created_at?: string
+          description: string
+          hint: string
+          hint_penalty?: number
+          id?: string
+          level: number
+          points?: number
+          puzzle: string
+          title: string
+        }
+        Update: {
+          active?: boolean
+          answer_hash?: string
+          category?: string
+          created_at?: string
+          description?: string
+          hint?: string
+          hint_penalty?: number
+          id?: string
+          level?: number
+          points?: number
+          puzzle?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      hint_usage: {
+        Row: {
+          challenge_id: string
+          participant_id: string
+          used_at: string
+        }
+        Insert: {
+          challenge_id: string
+          participant_id: string
+          used_at?: string
+        }
+        Update: {
+          challenge_id?: string
+          participant_id?: string
+          used_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hint_usage_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hint_usage_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      participants: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          current_level: number
+          display_name: string
+          id: string
+          score: number
+          token_hash: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          current_level?: number
+          display_name: string
+          id?: string
+          score?: number
+          token_hash: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          current_level?: number
+          display_name?: string
+          id?: string
+          score?: number
+          token_hash?: string
+        }
+        Relationships: []
+      }
+      solves: {
+        Row: {
+          challenge_id: string
+          participant_id: string
+          points: number
+          solved_at: string
+        }
+        Insert: {
+          challenge_id: string
+          participant_id: string
+          points: number
+          solved_at?: string
+        }
+        Update: {
+          challenge_id?: string
+          participant_id?: string
+          points?: number
+          solved_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "solves_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "solves_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      submissions: {
+        Row: {
+          challenge_id: string
+          correct: boolean
+          created_at: string
+          id: string
+          participant_id: string
+        }
+        Insert: {
+          challenge_id: string
+          correct: boolean
+          created_at?: string
+          id?: string
+          participant_id: string
+        }
+        Update: {
+          challenge_id?: string
+          correct?: boolean
+          created_at?: string
+          id?: string
+          participant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submissions_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "submissions_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_first_admin: { Args: never; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +357,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
