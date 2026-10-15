@@ -10,33 +10,167 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CompleteRouteImport } from './routes/complete'
+import { Route as LeaderboardRouteImport } from './routes/leaderboard'
+import { Route as RegisterRouteImport } from './routes/register'
+import { Route as RulesRouteImport } from './routes/rules'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminChallengesRouteImport } from './routes/admin.challenges'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminParticipantsRouteImport } from './routes/admin.participants'
+import { Route as HuntIndexRouteImport } from './routes/hunt.index'
+import { Route as HuntLevelRouteImport } from './routes/hunt.$level'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompleteRoute = CompleteRouteImport.update({
+  id: '/complete',
+  path: '/complete',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaderboardRoute = LeaderboardRouteImport.update({
+  id: '/leaderboard',
+  path: '/leaderboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RulesRoute = RulesRouteImport.update({
+  id: '/rules',
+  path: '/rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminChallengesRoute = AdminChallengesRouteImport.update({
+  id: '/admin/challenges',
+  path: '/admin/challenges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminParticipantsRoute = AdminParticipantsRouteImport.update({
+  id: '/admin/participants',
+  path: '/admin/participants',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HuntIndexRoute = HuntIndexRouteImport.update({
+  id: '/hunt/',
+  path: '/hunt/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HuntLevelRoute = HuntLevelRouteImport.update({
+  id: '/hunt/$level',
+  path: '/hunt/$level',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/complete': typeof CompleteRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/register': typeof RegisterRoute
+  '/rules': typeof RulesRoute
+  '/admin/challenges': typeof AdminChallengesRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/participants': typeof AdminParticipantsRoute
+  '/hunt/$level': typeof HuntLevelRoute
+  '/admin/': typeof AdminIndexRoute
+  '/hunt/': typeof HuntIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/complete': typeof CompleteRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/register': typeof RegisterRoute
+  '/rules': typeof RulesRoute
+  '/admin/challenges': typeof AdminChallengesRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/participants': typeof AdminParticipantsRoute
+  '/hunt/$level': typeof HuntLevelRoute
+  '/admin': typeof AdminIndexRoute
+  '/hunt': typeof HuntIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/complete': typeof CompleteRoute
+  '/leaderboard': typeof LeaderboardRoute
+  '/register': typeof RegisterRoute
+  '/rules': typeof RulesRoute
+  '/admin/challenges': typeof AdminChallengesRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/participants': typeof AdminParticipantsRoute
+  '/hunt/$level': typeof HuntLevelRoute
+  '/admin/': typeof AdminIndexRoute
+  '/hunt/': typeof HuntIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/complete'
+    | '/leaderboard'
+    | '/register'
+    | '/rules'
+    | '/admin/challenges'
+    | '/admin/login'
+    | '/admin/participants'
+    | '/hunt/$level'
+    | '/admin/'
+    | '/hunt/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/complete'
+    | '/leaderboard'
+    | '/register'
+    | '/rules'
+    | '/admin/challenges'
+    | '/admin/login'
+    | '/admin/participants'
+    | '/hunt/$level'
+    | '/admin'
+    | '/hunt'
+  id:
+    | '__root__'
+    | '/'
+    | '/complete'
+    | '/leaderboard'
+    | '/register'
+    | '/rules'
+    | '/admin/challenges'
+    | '/admin/login'
+    | '/admin/participants'
+    | '/hunt/$level'
+    | '/admin/'
+    | '/hunt/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CompleteRoute: typeof CompleteRoute
+  LeaderboardRoute: typeof LeaderboardRoute
+  RegisterRoute: typeof RegisterRoute
+  RulesRoute: typeof RulesRoute
+  AdminChallengesRoute: typeof AdminChallengesRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminParticipantsRoute: typeof AdminParticipantsRoute
+  HuntLevelRoute: typeof HuntLevelRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+  HuntIndexRoute: typeof HuntIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +182,91 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/complete': {
+      id: '/complete'
+      path: '/complete'
+      fullPath: '/complete'
+      preLoaderRoute: typeof CompleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leaderboard': {
+      id: '/leaderboard'
+      path: '/leaderboard'
+      fullPath: '/leaderboard'
+      preLoaderRoute: typeof LeaderboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rules': {
+      id: '/rules'
+      path: '/rules'
+      fullPath: '/rules'
+      preLoaderRoute: typeof RulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/challenges': {
+      id: '/admin/challenges'
+      path: '/admin/challenges'
+      fullPath: '/admin/challenges'
+      preLoaderRoute: typeof AdminChallengesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/participants': {
+      id: '/admin/participants'
+      path: '/admin/participants'
+      fullPath: '/admin/participants'
+      preLoaderRoute: typeof AdminParticipantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hunt/': {
+      id: '/hunt/'
+      path: '/hunt'
+      fullPath: '/hunt/'
+      preLoaderRoute: typeof HuntIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hunt/$level': {
+      id: '/hunt/$level'
+      path: '/hunt/$level'
+      fullPath: '/hunt/$level'
+      preLoaderRoute: typeof HuntLevelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CompleteRoute: CompleteRoute,
+  LeaderboardRoute: LeaderboardRoute,
+  RegisterRoute: RegisterRoute,
+  RulesRoute: RulesRoute,
+  AdminChallengesRoute: AdminChallengesRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminParticipantsRoute: AdminParticipantsRoute,
+  HuntLevelRoute: HuntLevelRoute,
+  AdminIndexRoute: AdminIndexRoute,
+  HuntIndexRoute: HuntIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
