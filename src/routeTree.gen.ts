@@ -14,6 +14,10 @@ import { Route as CompleteRouteImport } from './routes/complete'
 import { Route as LeaderboardRouteImport } from './routes/leaderboard'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as RulesRouteImport } from './routes/rules'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminChallengesRouteImport } from './routes/admin.challenges'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminParticipantsRouteImport } from './routes/admin.participants'
 import { Route as HuntIndexRouteImport } from './routes/hunt.index'
 import { Route as HuntLevelRouteImport } from './routes/hunt.$level'
 
@@ -42,6 +46,26 @@ const RulesRoute = RulesRouteImport.update({
   path: '/rules',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminChallengesRoute = AdminChallengesRouteImport.update({
+  id: '/admin/challenges',
+  path: '/admin/challenges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminParticipantsRoute = AdminParticipantsRouteImport.update({
+  id: '/admin/participants',
+  path: '/admin/participants',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HuntIndexRoute = HuntIndexRouteImport.update({
   id: '/hunt/',
   path: '/hunt/',
@@ -59,7 +83,11 @@ export interface FileRoutesByFullPath {
   '/leaderboard': typeof LeaderboardRoute
   '/register': typeof RegisterRoute
   '/rules': typeof RulesRoute
+  '/admin/challenges': typeof AdminChallengesRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/participants': typeof AdminParticipantsRoute
   '/hunt/$level': typeof HuntLevelRoute
+  '/admin/': typeof AdminIndexRoute
   '/hunt/': typeof HuntIndexRoute
 }
 export interface FileRoutesByTo {
@@ -68,7 +96,11 @@ export interface FileRoutesByTo {
   '/leaderboard': typeof LeaderboardRoute
   '/register': typeof RegisterRoute
   '/rules': typeof RulesRoute
+  '/admin/challenges': typeof AdminChallengesRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/participants': typeof AdminParticipantsRoute
   '/hunt/$level': typeof HuntLevelRoute
+  '/admin': typeof AdminIndexRoute
   '/hunt': typeof HuntIndexRoute
 }
 export interface FileRoutesById {
@@ -78,7 +110,11 @@ export interface FileRoutesById {
   '/leaderboard': typeof LeaderboardRoute
   '/register': typeof RegisterRoute
   '/rules': typeof RulesRoute
+  '/admin/challenges': typeof AdminChallengesRoute
+  '/admin/login': typeof AdminLoginRoute
+  '/admin/participants': typeof AdminParticipantsRoute
   '/hunt/$level': typeof HuntLevelRoute
+  '/admin/': typeof AdminIndexRoute
   '/hunt/': typeof HuntIndexRoute
 }
 export interface FileRouteTypes {
@@ -89,7 +125,11 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/register'
     | '/rules'
+    | '/admin/challenges'
+    | '/admin/login'
+    | '/admin/participants'
     | '/hunt/$level'
+    | '/admin/'
     | '/hunt/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -98,7 +138,11 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/register'
     | '/rules'
+    | '/admin/challenges'
+    | '/admin/login'
+    | '/admin/participants'
     | '/hunt/$level'
+    | '/admin'
     | '/hunt'
   id:
     | '__root__'
@@ -107,7 +151,11 @@ export interface FileRouteTypes {
     | '/leaderboard'
     | '/register'
     | '/rules'
+    | '/admin/challenges'
+    | '/admin/login'
+    | '/admin/participants'
     | '/hunt/$level'
+    | '/admin/'
     | '/hunt/'
   fileRoutesById: FileRoutesById
 }
@@ -117,7 +165,11 @@ export interface RootRouteChildren {
   LeaderboardRoute: typeof LeaderboardRoute
   RegisterRoute: typeof RegisterRoute
   RulesRoute: typeof RulesRoute
+  AdminChallengesRoute: typeof AdminChallengesRoute
+  AdminLoginRoute: typeof AdminLoginRoute
+  AdminParticipantsRoute: typeof AdminParticipantsRoute
   HuntLevelRoute: typeof HuntLevelRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   HuntIndexRoute: typeof HuntIndexRoute
 }
 
@@ -158,6 +210,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RulesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/challenges': {
+      id: '/admin/challenges'
+      path: '/admin/challenges'
+      fullPath: '/admin/challenges'
+      preLoaderRoute: typeof AdminChallengesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/participants': {
+      id: '/admin/participants'
+      path: '/admin/participants'
+      fullPath: '/admin/participants'
+      preLoaderRoute: typeof AdminParticipantsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hunt/': {
       id: '/hunt/'
       path: '/hunt'
@@ -181,7 +261,11 @@ const rootRouteChildren: RootRouteChildren = {
   LeaderboardRoute: LeaderboardRoute,
   RegisterRoute: RegisterRoute,
   RulesRoute: RulesRoute,
+  AdminChallengesRoute: AdminChallengesRoute,
+  AdminLoginRoute: AdminLoginRoute,
+  AdminParticipantsRoute: AdminParticipantsRoute,
   HuntLevelRoute: HuntLevelRoute,
+  AdminIndexRoute: AdminIndexRoute,
   HuntIndexRoute: HuntIndexRoute,
 }
 export const routeTree = rootRouteImport
