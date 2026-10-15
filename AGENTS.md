@@ -8,3 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Participants have no login: a random token in localStorage is hashed server-side; all participant reads/writes go through server functions in src/lib/hunt.functions.ts using the admin client. Why: answers/hints must never reach the browser.
+- Challenge answers are stored only as SHA-256 of the lowercased trimmed answer. Why: no plaintext answers in the database.
+- Admins use email auth + user_roles/has_role; admin server functions in src/lib/admin.functions.ts rely on RLS "admin all" policies. First signed-in account can claim admin via claim_first_admin().
