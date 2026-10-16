@@ -13,7 +13,7 @@ async function getParticipant(token: string) {
   const db = await admin();
   const { data } = await db
     .from("participants")
-    .select("id, display_name, score, current_level, completed_at, created_at")
+    .select("id, display_name, score, current_level, completed_at, created_at, started_at, hints_used, session_started_at, last_seen_at")
     .eq("token_hash", await sha256(token))
     .maybeSingle();
   if (!data) throw new Error("Session not found. Please register again.");
