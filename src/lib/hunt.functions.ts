@@ -197,7 +197,11 @@ export const submitAnswer = createServerFn({ method: "POST" })
 
     const correct = (await sha256(normalize(data.answer))) === c.answer_hash;
     await db.from("submissions").insert({ participant_id: p.id, challenge_id: c.id, correct });
-    if (!correct) return { correct: false, alreadySolved: false, completed: false, points: 0 };
+    await touch(db, p.id);
+    if (!correct) {
+      await log(db, p, "wrong", `Incorrect answer on level ${data.level}`);
+      return { correct: false, alreadySolved: false, completed: false, points: 0 };
+    }
 
     const { data: hint } = await db
       .from("hint_usage").select("challenge_id").eq("participant_id", p.id).eq("challenge_id", c.id).maybeSingle();
