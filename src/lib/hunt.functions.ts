@@ -94,6 +94,7 @@ export const getProgress = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const p = await getParticipant(data.token);
     const db = await admin();
+    await touch(db, p.id);
     const [{ data: ch }, { data: solves }, { data: hints }] = await Promise.all([
       db.from("challenges").select("id, level, title, category, points").eq("active", true).order("level"),
       db.from("solves").select("challenge_id, points").eq("participant_id", p.id),
