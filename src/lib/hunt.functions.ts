@@ -219,6 +219,8 @@ export const submitAnswer = createServerFn({ method: "POST" })
         completed_at: completed ? new Date().toISOString() : null,
       })
       .eq("id", p.id);
+    await log(db, p, "solve", `Solved level ${c.level} for ${pts} points`);
+    if (completed) await log(db, p, "complete", "Finished the hunt");
     return { correct: true, alreadySolved: false, completed, points: pts, nextLevel: next?.level ?? null };
   });
 
