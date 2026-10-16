@@ -13,13 +13,26 @@ async function getParticipant(token: string) {
   const db = await admin();
   const { data } = await db
     .from("participants")
-    .select("id, display_name, score, current_level, completed_at, created_at")
+    .select("id, display_name, score, current_level, completed_at, created_at, started_at, hints_used, session_started_at, last_seen_at")
     .eq("token_hash", await sha256(token))
     .maybeSingle();
   if (!data) throw new Error("Session not found. Please register again.");
   return data;
 }
 const tokenSchema = z.object({ token: z.string().min(10).max(200) });
+
+type Db = Awaited<ReturnType<typeof admin>>;
+async function log(db: Db, p: { id: string; display_name: string }, event_type: string, detail = "") {
+  await db.from("activity_log").insert({
+    participant_id: p.id,
+    display_name: p.display_name,
+    event_type,
+    detail,
+  });
+}
+async function touch(db: Db, id: string) {
+  await db.from("participants").update({ last_seen_at: new Date().toISOString() }).eq("id", id);
+}
 
 export const registerParticipant = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
@@ -37,14 +50,43 @@ export const registerParticipant = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const db = await admin();
     const token = crypto.randomUUID() + crypto.randomUUID();
-    const { error } = await db
+    const now = new Date().toISOString();
+    const { data: row, error } = await db
       .from("participants")
-      .insert({ display_name: data.displayName, token_hash: await sha256(token) });
-    if (error) {
-      if (error.code === "23505") throw new Error("That display name is taken.");
+      .insert({
+        display_name: data.displayName,
+        token_hash: await sha256(token),
+        last_seen_at: now,
+        session_started_at: now,
+      })
+      .select("id, display_name")
+      .single();
+    if (error || !row) {
+      if (error?.code === "23505") throw new Error("That display name is taken.");
       throw new Error("Could not register. Try again.");
     }
+    await log(db, row, "register", "Registered and joined the hunt");
     return { token };
+  });
+
+export const heartbeat = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => tokenSchema.parse(d))
+  .handler(async ({ data }) => {
+    const p = await getParticipant(data.token);
+    const db = await admin();
+    await touch(db, p.id);
+    return { ok: true };
+  });
+
+export const endSession = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => tokenSchema.parse(d))
+  .handler(async ({ data }) => {
+    const p = await getParticipant(data.token);
+    const db = await admin();
+    const now = new Date().toISOString();
+    await db.from("participants").update({ last_logout_at: now, last_seen_at: now }).eq("id", p.id);
+    await log(db, p, "logout", "Signed out");
+    return { ok: true };
   });
 
 export const getProgress = createServerFn({ method: "POST" })
@@ -52,6 +94,7 @@ export const getProgress = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const p = await getParticipant(data.token);
     const db = await admin();
+    await touch(db, p.id);
     const [{ data: ch }, { data: solves }, { data: hints }] = await Promise.all([
       db.from("challenges").select("id, level, title, category, points").eq("active", true).order("level"),
       db.from("solves").select("challenge_id, points").eq("participant_id", p.id),
@@ -76,6 +119,11 @@ export const getChallenge = createServerFn({ method: "POST" })
     const p = await getParticipant(data.token);
     if (data.level > p.current_level) throw new Error("This level is still locked.");
     const db = await admin();
+    const nowIso = new Date().toISOString();
+    await db
+      .from("participants")
+      .update({ last_seen_at: nowIso, ...(p.started_at ? {} : { started_at: nowIso }) })
+      .eq("id", p.id);
     const { data: c } = await db
       .from("challenges")
       .select("id, level, title, category, description, puzzle, hint, points, hint_penalty")
@@ -105,7 +153,18 @@ export const requestHint = createServerFn({ method: "POST" })
     const db = await admin();
     const { data: c } = await db.from("challenges").select("id, hint").eq("level", data.level).single();
     if (!c) throw new Error("Not found");
+    const { data: existing } = await db
+      .from("hint_usage")
+      .select("challenge_id")
+      .eq("participant_id", p.id)
+      .eq("challenge_id", c.id)
+      .maybeSingle();
     await db.from("hint_usage").upsert({ participant_id: p.id, challenge_id: c.id }, { ignoreDuplicates: true });
+    await touch(db, p.id);
+    if (!existing) {
+      await db.from("participants").update({ hints_used: (p.hints_used ?? 0) + 1 }).eq("id", p.id);
+      await log(db, p, "hint", `Used a hint on level ${data.level}`);
+    }
     return { hint: c.hint };
   });
 
@@ -138,7 +197,11 @@ export const submitAnswer = createServerFn({ method: "POST" })
 
     const correct = (await sha256(normalize(data.answer))) === c.answer_hash;
     await db.from("submissions").insert({ participant_id: p.id, challenge_id: c.id, correct });
-    if (!correct) return { correct: false, alreadySolved: false, completed: false, points: 0 };
+    await touch(db, p.id);
+    if (!correct) {
+      await log(db, p, "wrong", `Incorrect answer on level ${data.level}`);
+      return { correct: false, alreadySolved: false, completed: false, points: 0 };
+    }
 
     const { data: hint } = await db
       .from("hint_usage").select("challenge_id").eq("participant_id", p.id).eq("challenge_id", c.id).maybeSingle();
@@ -156,6 +219,8 @@ export const submitAnswer = createServerFn({ method: "POST" })
         completed_at: completed ? new Date().toISOString() : null,
       })
       .eq("id", p.id);
+    await log(db, p, "solve", `Solved level ${c.level} for ${pts} points`);
+    if (completed) await log(db, p, "complete", "Finished the hunt");
     return { correct: true, alreadySolved: false, completed, points: pts, nextLevel: next?.level ?? null };
   });
 
