@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_log: {
+        Row: {
+          created_at: string
+          detail: string
+          display_name: string
+          event_type: string
+          id: string
+          participant_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          detail?: string
+          display_name: string
+          event_type: string
+          id?: string
+          participant_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          detail?: string
+          display_name?: string
+          event_type?: string
+          id?: string
+          participant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_log_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "participants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       challenges: {
         Row: {
           active: boolean
@@ -59,6 +94,27 @@ export type Database = {
         }
         Relationships: []
       }
+      competition_settings: {
+        Row: {
+          duration_minutes: number | null
+          id: boolean
+          started_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          duration_minutes?: number | null
+          id?: boolean
+          started_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          duration_minutes?: number | null
+          id?: boolean
+          started_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hint_usage: {
         Row: {
           challenge_id: string
@@ -98,8 +154,13 @@ export type Database = {
           created_at: string
           current_level: number
           display_name: string
+          hints_used: number
           id: string
+          last_logout_at: string | null
+          last_seen_at: string | null
           score: number
+          session_started_at: string | null
+          started_at: string | null
           token_hash: string
         }
         Insert: {
@@ -107,8 +168,13 @@ export type Database = {
           created_at?: string
           current_level?: number
           display_name: string
+          hints_used?: number
           id?: string
+          last_logout_at?: string | null
+          last_seen_at?: string | null
           score?: number
+          session_started_at?: string | null
+          started_at?: string | null
           token_hash: string
         }
         Update: {
@@ -116,8 +182,13 @@ export type Database = {
           created_at?: string
           current_level?: number
           display_name?: string
+          hints_used?: number
           id?: string
+          last_logout_at?: string | null
+          last_seen_at?: string | null
           score?: number
+          session_started_at?: string | null
+          started_at?: string | null
           token_hash?: string
         }
         Relationships: []
