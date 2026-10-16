@@ -119,6 +119,11 @@ export const getChallenge = createServerFn({ method: "POST" })
     const p = await getParticipant(data.token);
     if (data.level > p.current_level) throw new Error("This level is still locked.");
     const db = await admin();
+    const nowIso = new Date().toISOString();
+    await db
+      .from("participants")
+      .update({ last_seen_at: nowIso, ...(p.started_at ? {} : { started_at: nowIso }) })
+      .eq("id", p.id);
     const { data: c } = await db
       .from("challenges")
       .select("id, level, title, category, description, puzzle, hint, points, hint_penalty")
