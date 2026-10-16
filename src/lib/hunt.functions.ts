@@ -153,7 +153,18 @@ export const requestHint = createServerFn({ method: "POST" })
     const db = await admin();
     const { data: c } = await db.from("challenges").select("id, hint").eq("level", data.level).single();
     if (!c) throw new Error("Not found");
+    const { data: existing } = await db
+      .from("hint_usage")
+      .select("challenge_id")
+      .eq("participant_id", p.id)
+      .eq("challenge_id", c.id)
+      .maybeSingle();
     await db.from("hint_usage").upsert({ participant_id: p.id, challenge_id: c.id }, { ignoreDuplicates: true });
+    await touch(db, p.id);
+    if (!existing) {
+      await db.from("participants").update({ hints_used: (p.hints_used ?? 0) + 1 }).eq("id", p.id);
+      await log(db, p, "hint", `Used a hint on level ${data.level}`);
+    }
     return { hint: c.hint };
   });
 
