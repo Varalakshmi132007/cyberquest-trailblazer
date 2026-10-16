@@ -21,6 +21,19 @@ async function getParticipant(token: string) {
 }
 const tokenSchema = z.object({ token: z.string().min(10).max(200) });
 
+type Db = Awaited<ReturnType<typeof admin>>;
+async function log(db: Db, p: { id: string; display_name: string }, event_type: string, detail = "") {
+  await db.from("activity_log").insert({
+    participant_id: p.id,
+    display_name: p.display_name,
+    event_type,
+    detail,
+  });
+}
+async function touch(db: Db, id: string) {
+  await db.from("participants").update({ last_seen_at: new Date().toISOString() }).eq("id", id);
+}
+
 export const registerParticipant = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z
