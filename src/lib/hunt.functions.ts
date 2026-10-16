@@ -50,14 +50,43 @@ export const registerParticipant = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const db = await admin();
     const token = crypto.randomUUID() + crypto.randomUUID();
-    const { error } = await db
+    const now = new Date().toISOString();
+    const { data: row, error } = await db
       .from("participants")
-      .insert({ display_name: data.displayName, token_hash: await sha256(token) });
-    if (error) {
-      if (error.code === "23505") throw new Error("That display name is taken.");
+      .insert({
+        display_name: data.displayName,
+        token_hash: await sha256(token),
+        last_seen_at: now,
+        session_started_at: now,
+      })
+      .select("id, display_name")
+      .single();
+    if (error || !row) {
+      if (error?.code === "23505") throw new Error("That display name is taken.");
       throw new Error("Could not register. Try again.");
     }
+    await log(db, row, "register", "Registered and joined the hunt");
     return { token };
+  });
+
+export const heartbeat = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => tokenSchema.parse(d))
+  .handler(async ({ data }) => {
+    const p = await getParticipant(data.token);
+    const db = await admin();
+    await touch(db, p.id);
+    return { ok: true };
+  });
+
+export const endSession = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => tokenSchema.parse(d))
+  .handler(async ({ data }) => {
+    const p = await getParticipant(data.token);
+    const db = await admin();
+    const now = new Date().toISOString();
+    await db.from("participants").update({ last_logout_at: now, last_seen_at: now }).eq("id", p.id);
+    await log(db, p, "logout", "Signed out");
+    return { ok: true };
   });
 
 export const getProgress = createServerFn({ method: "POST" })
