@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteNav } from "@/components/SiteNav";
 import { Toaster } from "@/components/ui/sonner";
+import { useHeartbeat } from "@/hooks/useHeartbeat";
 
 function NotFoundComponent() {
   return (
@@ -118,6 +119,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useHeartbeat();
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -12,3 +12,4 @@
 - Participants have no login: a random token in localStorage is hashed server-side; all participant reads/writes go through server functions in src/lib/hunt.functions.ts using the admin client. Why: answers/hints must never reach the browser.
 - Challenge answers are stored only as SHA-256 of the lowercased trimmed answer. Why: no plaintext answers in the database.
 - Admins use email auth + user_roles/has_role; admin server functions in src/lib/admin.functions.ts rely on RLS "admin all" policies. First signed-in account can claim admin via claim_first_admin().
+- Live monitoring uses token-verified participant heartbeats and persisted activity events, with authenticated admin polling; this preserves browser-based participation without exposing challenge secrets.
