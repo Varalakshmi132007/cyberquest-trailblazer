@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/admin/login")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Admin Login — CyberQuest" },
       { name: "description", content: "Sign in to manage CyberQuest challenges and participants." },
       { property: "og:title", content: "CyberQuest Admin Login" },

@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "CyberQuest — Crack the codes. Unlock the treasure." },
       { name: "description", content: "A five-level cybersecurity treasure hunt for college students: ciphers, encoding, phishing, hashes and binary." },
       { property: "og:title", content: "CyberQuest — Cybersecurity Treasure Hunt" },

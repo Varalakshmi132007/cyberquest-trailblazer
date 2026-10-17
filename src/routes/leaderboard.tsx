@@ -7,6 +7,8 @@ const lbQuery = queryOptions({ queryKey: ["leaderboard"], queryFn: () => getLead
 export const Route = createFileRoute("/leaderboard")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Leaderboard — CyberQuest" },
       { name: "description", content: "Top CyberQuest operators ranked by score." },
       { property: "og:title", content: "CyberQuest Leaderboard" },

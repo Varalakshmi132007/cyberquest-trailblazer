@@ -9,6 +9,8 @@ import { adminOverview, adminParticipantAction } from "@/lib/admin.functions";
 export const Route = createFileRoute("/admin/participants")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Participants & Results — CyberQuest Admin" },
       { name: "description", content: "Manage CyberQuest participants and their results." },
       { property: "og:title", content: "CyberQuest Participants" },

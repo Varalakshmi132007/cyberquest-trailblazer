@@ -11,6 +11,8 @@ import { setToken } from "@/lib/session";
 export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Register — CyberQuest" },
       { name: "description", content: "Pick a display name and join the CyberQuest treasure hunt." },
       { property: "og:title", content: "Join CyberQuest" },

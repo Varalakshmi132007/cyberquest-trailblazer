@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/rules")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Rules & Instructions — CyberQuest" },
       { name: "description", content: "How CyberQuest works: levels, scoring, hints and fair play." },
       { property: "og:title", content: "CyberQuest Rules" },

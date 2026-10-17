@@ -9,6 +9,8 @@ import { rankParticipants } from "@/lib/monitoring";
 export const Route = createFileRoute("/admin/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Admin Dashboard — CyberQuest" },
       { name: "description", content: "Live monitoring of CyberQuest participants, progress and activity." },
       { property: "og:title", content: "CyberQuest Admin Dashboard" },

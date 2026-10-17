@@ -9,6 +9,8 @@ import { getToken } from "@/lib/session";
 export const Route = createFileRoute("/complete")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Treasure Unlocked — CyberQuest" },
       { name: "description", content: "You cracked every vault in CyberQuest." },
       { property: "og:title", content: "CyberQuest Treasure Unlocked" },
