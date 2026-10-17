@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { isOnline } from "@/lib/monitoring";
 
 async function sha256(s: string) {
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
@@ -43,8 +44,8 @@ export const adminSaveChallenge = createServerFn({ method: "POST" })
       const { error } = await context.supabase.from("challenges").update(row).eq("id", id);
       if (error) throw new Error(error.message);
     } else {
-      if (!answer) throw new Error("An answer is required for new challenges.");
-      const { error } = await context.supabase.from("challenges").insert({ ...row, answer_hash: row.answer_hash! });
+      if (!answer || !row.answer_hash) throw new Error("An answer is required for new challenges.");
+      const { error } = await context.supabase.from("challenges").insert({ ...row, answer_hash: row.answer_hash });
       if (error) throw new Error(error.code === "23505" ? "That level number is already used." : error.message);
     }
     return { ok: true };
@@ -58,8 +59,6 @@ export const adminDeleteChallenge = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
-
-const ONLINE_WINDOW_MS = 90_000;
 
 export const adminOverview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -78,7 +77,9 @@ export const adminOverview = createServerFn({ method: "POST" })
       sb.from("hint_usage").select("participant_id, challenge_id"),
       sb.from("competition_settings").select("duration_minutes, started_at").maybeSingle(),
     ]);
-    if (p.error) throw new Error(p.error.message);
+    for (const result of [p, s, c, sub, hints, settings]) {
+      if (result.error) throw new Error(result.error.message);
+    }
     const now = Date.now();
     const duration = settings.data?.duration_minutes ?? null;
     const globalStart = settings.data?.started_at ?? null;
@@ -87,7 +88,7 @@ export const adminOverview = createServerFn({ method: "POST" })
     const participants = (p.data ?? []).map((x) => {
       const subs = (sub.data ?? []).filter((v) => v.participant_id === x.id);
       const solvedCount = (s.data ?? []).filter((v) => v.participant_id === x.id).length;
-      const online = !!x.last_seen_at && now - new Date(x.last_seen_at).getTime() < ONLINE_WINDOW_MS;
+      const online = isOnline(x.last_seen_at, x.last_logout_at, now);
       const startRef = globalStart ?? x.started_at;
       const deadline = duration && startRef ? new Date(startRef).getTime() + duration * 60_000 : null;
       const remainingMs = deadline ? Math.max(0, deadline - now) : null;
@@ -160,10 +161,10 @@ export const adminActivityLog = createServerFn({ method: "POST" })
       .order("created_at", { ascending: false })
       .limit(data.limit ?? 200);
     if (data.participantId) q = q.eq("participant_id", data.participantId);
-    if (data.search) q = q.or(`display_name.ilike.%${data.search}%,detail.ilike.%${data.search}%,event_type.ilike.%${data.search}%`);
     const { data: rows, error } = await q;
     if (error) throw new Error(error.message);
-    return rows ?? [];
+    const search = data.search?.toLowerCase();
+    return (rows ?? []).filter(row => !search || [row.display_name, row.detail, row.event_type].some(value => value.toLowerCase().includes(search)));
   });
 
 export const adminParticipantAction = createServerFn({ method: "POST" })
@@ -180,7 +181,7 @@ export const adminParticipantAction = createServerFn({ method: "POST" })
       await sb.from("submissions").delete().eq("participant_id", data.id);
       const { error } = await sb
         .from("participants")
-        .update({ score: 0, current_level: 1, completed_at: null })
+        .update({ score: 0, current_level: 1, completed_at: null, started_at: null, hints_used: 0 })
         .eq("id", data.id);
       if (error) throw new Error(error.message);
     }

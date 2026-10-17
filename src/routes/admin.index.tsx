@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Input } from "@/components/ui/input";
 import { AdminGate } from "@/components/AdminGate";
 import { adminActivityLog, adminOverview } from "@/lib/admin.functions";
+import { rankParticipants } from "@/lib/monitoring";
 
 export const Route = createFileRoute("/admin/")({
   head: () => ({
@@ -48,6 +49,7 @@ function Overview() {
   const [search, setSearch] = useState("");
   const [who, setWho] = useState("");
   const [updated, setUpdated] = useState<Date | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     try {
@@ -58,8 +60,9 @@ function Overview() {
       setD(o);
       setLog(l);
       setUpdated(new Date());
+      setError(null);
     } catch {
-      /* keep showing last good data */
+      setError("Live updates unavailable. Retrying automatically…");
     }
   }, [load, loadLog, search, who]);
 
@@ -69,15 +72,9 @@ function Overview() {
     return () => clearInterval(id);
   }, [refresh]);
 
-  if (!d) return <p className="font-mono text-muted-foreground">Loading…</p>;
+  if (!d) return <p className="font-mono text-muted-foreground">{error ?? "Loading…"}</p>;
 
-  const ranked = [...d.participants].sort(
-    (a, b) =>
-      b.score - a.score ||
-      (a.completed_at ? new Date(a.completed_at).getTime() : Infinity) -
-        (b.completed_at ? new Date(b.completed_at).getTime() : Infinity) ||
-      new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
-  );
+  const ranked = rankParticipants(d.participants);
 
   const stats: [string, number | string][] = [
     ["Participants", d.totals.participants],
@@ -94,10 +91,11 @@ function Overview() {
 
   return (
     <div className="space-y-6">
+      {error && <p role="alert" className="text-destructive">{error}</p>}
       <div className="flex items-center justify-between">
         <p className="font-mono text-xs text-accent">
           <span className="mr-2 inline-block h-2 w-2 animate-pulse rounded-full bg-success align-middle" />
-          live · auto-refresh every 5s
+          Live monitor
         </p>
         <p className="font-mono text-xs text-muted-foreground">updated {updated ? updated.toLocaleTimeString() : "—"}</p>
       </div>
@@ -211,12 +209,14 @@ function Overview() {
           <h2 className="text-lg font-semibold">Activity log</h2>
           <div className="flex flex-wrap gap-2">
             <Input
+              aria-label="Search activity"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search activity…"
               className="h-9 w-56"
             />
             <select
+              aria-label="Filter activity by participant"
               value={who}
               onChange={(e) => setWho(e.target.value)}
               className="h-9 rounded-md border bg-background px-2 text-sm"
