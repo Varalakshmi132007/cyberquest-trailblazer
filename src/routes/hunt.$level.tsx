@@ -12,6 +12,8 @@ import { getToken } from "@/lib/session";
 export const Route = createFileRoute("/hunt/$level")({
   head: ({ params }) => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: `Level ${params.level} — CyberQuest` },
       { name: "description", content: `Solve CyberQuest challenge level ${params.level}.` },
       { property: "og:title", content: `CyberQuest Level ${params.level}` },

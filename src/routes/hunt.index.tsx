@@ -10,6 +10,8 @@ import { clearToken, getToken } from "@/lib/session";
 export const Route = createFileRoute("/hunt/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Hunt Dashboard — CyberQuest" },
       { name: "description", content: "Track your progress through the five CyberQuest challenges." },
       { property: "og:title", content: "CyberQuest Hunt Dashboard" },

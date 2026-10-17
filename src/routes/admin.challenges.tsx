@@ -13,6 +13,8 @@ import { adminDeleteChallenge, adminListChallenges, adminSaveChallenge } from "@
 export const Route = createFileRoute("/admin/challenges")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Challenge Management — CyberQuest Admin" },
       { name: "description", content: "Create and edit CyberQuest challenges." },
       { property: "og:title", content: "CyberQuest Challenge Management" },
