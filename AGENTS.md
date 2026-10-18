@@ -13,3 +13,4 @@
 - Challenge answers are stored only as SHA-256 of the lowercased trimmed answer. Why: no plaintext answers in the database.
 - Admins use email auth + user_roles/has_role; admin server functions in src/lib/admin.functions.ts rely on RLS "admin all" policies. First signed-in account can claim admin via claim_first_admin().
 - Live monitoring uses token-verified participant heartbeats and persisted activity events, with authenticated admin polling; this preserves browser-based participation without exposing challenge secrets.
+- Account emails return to the public /auth/callback route on the published site, with shared auth-flow helpers and standard Cloud Auth APIs; verification and recovery remain in the existing account system.

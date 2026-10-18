@@ -18,6 +18,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminChallengesRouteImport } from './routes/admin.challenges'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminParticipantsRouteImport } from './routes/admin.participants'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as HuntIndexRouteImport } from './routes/hunt.index'
 import { Route as HuntLevelRouteImport } from './routes/hunt.$level'
 
@@ -66,6 +67,11 @@ const AdminParticipantsRoute = AdminParticipantsRouteImport.update({
   path: '/admin/participants',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HuntIndexRoute = HuntIndexRouteImport.update({
   id: '/hunt/',
   path: '/hunt/',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/admin/challenges': typeof AdminChallengesRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/participants': typeof AdminParticipantsRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/hunt/$level': typeof HuntLevelRoute
   '/admin/': typeof AdminIndexRoute
   '/hunt/': typeof HuntIndexRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/admin/challenges': typeof AdminChallengesRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/participants': typeof AdminParticipantsRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/hunt/$level': typeof HuntLevelRoute
   '/admin': typeof AdminIndexRoute
   '/hunt': typeof HuntIndexRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/admin/challenges': typeof AdminChallengesRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/participants': typeof AdminParticipantsRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/hunt/$level': typeof HuntLevelRoute
   '/admin/': typeof AdminIndexRoute
   '/hunt/': typeof HuntIndexRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/admin/challenges'
     | '/admin/login'
     | '/admin/participants'
+    | '/auth/callback'
     | '/hunt/$level'
     | '/admin/'
     | '/hunt/'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/admin/challenges'
     | '/admin/login'
     | '/admin/participants'
+    | '/auth/callback'
     | '/hunt/$level'
     | '/admin'
     | '/hunt'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/admin/challenges'
     | '/admin/login'
     | '/admin/participants'
+    | '/auth/callback'
     | '/hunt/$level'
     | '/admin/'
     | '/hunt/'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   AdminChallengesRoute: typeof AdminChallengesRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminParticipantsRoute: typeof AdminParticipantsRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
   HuntLevelRoute: typeof HuntLevelRoute
   AdminIndexRoute: typeof AdminIndexRoute
   HuntIndexRoute: typeof HuntIndexRoute
@@ -238,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminParticipantsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hunt/': {
       id: '/hunt/'
       path: '/hunt'
@@ -264,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminChallengesRoute: AdminChallengesRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminParticipantsRoute: AdminParticipantsRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
   HuntLevelRoute: HuntLevelRoute,
   AdminIndexRoute: AdminIndexRoute,
   HuntIndexRoute: HuntIndexRoute,
