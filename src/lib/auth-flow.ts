@@ -4,7 +4,7 @@ export const AUTH_RETURN_URL = "https://cyberquest-trailblazer.lovable.app/auth/
 export const EMAIL_RETRY_SECONDS = 60;
 export const normalizeEmail = (email: string) => email.trim().toLowerCase();
 
-export function authError(error: { code?: string; message: string; status?: number }) {
+export function authError(error: { code?: string | undefined; message: string; status?: number | undefined }) {
   if (error.code === "invalid_credentials") return "Email or password is incorrect. Use Forgot password to recover an existing account.";
   if (error.code === "email_not_confirmed") return "Confirm your email before signing in. Check your inbox and spam folder, or resend verification below.";
   if (error.status === 429 || error.code?.includes("rate_limit")) return "Too many requests. Wait before trying again; the email service may require a longer pause.";
